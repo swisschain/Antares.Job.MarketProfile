@@ -1,0 +1,18 @@
+MarketProfileJob:
+  Db:
+    LogsConnString:
+      settings-key: MarketProfileJob-LogsConnString
+      types:
+        - AzureTableStorage
+SlackNotifications:
+    AzureQueue:
+        ConnectionString:
+            settings-key: SlackNotificationsConnString
+            types:
+                - AzureTableStorage
+        QueueName:
+            settings-key: SlackQueueName
+MonitoringServiceClient:
+    MonitoringServiceUrl:
+        settings-key: MonitoringServiceUrl
+
