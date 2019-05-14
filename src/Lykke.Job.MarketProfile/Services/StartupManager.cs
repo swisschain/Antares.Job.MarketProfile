@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Common.Log;
+using Lykke.Job.MarketProfile.Domain.Repositories;
+using Lykke.Job.MarketProfile.Domain.Services;
 using Lykke.Sdk;
 
 namespace Lykke.Job.MarketProfile.Services
@@ -14,18 +16,31 @@ namespace Lykke.Job.MarketProfile.Services
 
     public class StartupManager : IStartupManager
     {
+        private readonly IAssetPairsRepository _repository;
+        private readonly IAssetPairsCacheService _cacheService;
         private readonly ILog _log;
 
-        public StartupManager(ILogFactory logFactory)
+        public StartupManager(
+            IAssetPairsRepository repository,
+            IAssetPairsCacheService cacheService,
+            ILogFactory logFactory)
         {
+            _repository = repository;
+            _cacheService = cacheService;
             _log = logFactory.CreateLog(this);
         }
 
         public async Task StartAsync()
         {
-            // TODO: Implement your startup logic here. Good idea is to log every step
-
-            await Task.CompletedTask;
+            _log.Info("Init cache...");
+            await UpdateCacheAsync();
+            _log.Info("Init cache finished.");
+        }
+        
+        private async Task UpdateCacheAsync()
+        {
+            var pairs = await _repository.ReadAsync();
+            await _cacheService.InitCacheAsync(pairs);
         }
     }
 }
