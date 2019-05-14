@@ -23,6 +23,9 @@ MarketProfileJob:
       types: [ RabbitMq ]
     QuotesExchangeName:
       settings-key: MarketProfileJob-QuotesExchangeName
+    QueueSuffix:
+      settings-key: MarketProfileJob-QueueSuffix
+      types: [ Optional ]
 SlackNotifications:
     AzureQueue:
         ConnectionString:
