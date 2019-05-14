@@ -16,6 +16,7 @@ namespace Lykke.Job.MarketProfile.RabbitMqSubscribers
     {
         private readonly string _connectionString;
         private readonly string _exchangeName;
+        private readonly string _queueSuffix;
         private readonly IAssetPairsCacheService _cacheService;
         private readonly ILogFactory _logFactory;
         private readonly ILog _log;
@@ -24,11 +25,13 @@ namespace Lykke.Job.MarketProfile.RabbitMqSubscribers
         public QuotesSubscriber(
             string connectionString,
             string exchangeName,
+            string queueSuffix,
             IAssetPairsCacheService cacheService,
             ILogFactory logFactory)
         {
             _connectionString = connectionString;
             _exchangeName = exchangeName;
+            _queueSuffix = queueSuffix;
             _cacheService = cacheService;
             _logFactory = logFactory;
             _log = logFactory.CreateLog(this);
@@ -39,7 +42,7 @@ namespace Lykke.Job.MarketProfile.RabbitMqSubscribers
             try
             {
                 var settings = RabbitMqSubscriptionSettings
-                    .ForSubscriber(_connectionString, "lykke", _exchangeName, "lykke", "marketprofilejob");
+                    .ForSubscriber(_connectionString, "lykke", _exchangeName, "lykke", $"marketprofilejob{_queueSuffix}");
 
                 _subscriber = new RabbitMqSubscriber<QuoteMessage>(_logFactory, settings,
                         new ResilientErrorHandlingStrategy(_logFactory, settings,

@@ -59,6 +59,7 @@ namespace Lykke.Job.MarketProfile.Modules
             builder.RegisterType<QuotesSubscriber>()
                 .WithParameter(new NamedParameter("connectionString", _settings.CurrentValue.MarketProfileJob.RabbitMq.QuotesConnectionString))
                 .WithParameter(new NamedParameter("exchangeName", _settings.CurrentValue.MarketProfileJob.RabbitMq.QuotesExchangeName))
+                .WithParameter(new NamedParameter("queueSuffix", _settings.CurrentValue.MarketProfileJob.RabbitMq.QueueSuffix))
                 .As<IStartable>()
                 .AutoActivate()
                 .SingleInstance();
