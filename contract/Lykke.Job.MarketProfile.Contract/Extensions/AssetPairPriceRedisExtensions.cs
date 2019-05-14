@@ -20,13 +20,13 @@ namespace Lykke.Job.MarketProfile.Contract.Extensions
                 assetPair.BidPrice = (double)bidPrice;
             
             if (hashDict.TryGetValue(nameof(AssetPairPrice.BidPriceTimestamp), out var bidTimestamp))
-                assetPair.BidPriceTimestamp = DateTime.Parse(bidTimestamp);
+                assetPair.BidPriceTimestamp = DateTime.Parse(bidTimestamp).ToUniversalTime();
             
             if (hashDict.TryGetValue(nameof(AssetPairPrice.AskPrice), out var askPrice))
                 assetPair.AskPrice = (double)askPrice;
             
             if (hashDict.TryGetValue(nameof(AssetPairPrice.AskPriceTimestamp), out var askTimestamp))
-                assetPair.AskPriceTimestamp = DateTime.Parse(askTimestamp);
+                assetPair.AskPriceTimestamp = DateTime.Parse(askTimestamp).ToUniversalTime();
             
             return assetPair;
         }
