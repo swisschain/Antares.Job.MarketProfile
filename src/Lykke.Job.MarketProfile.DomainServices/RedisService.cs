@@ -22,7 +22,7 @@ namespace Lykke.Job.MarketProfile.DomainServices
             var tasks = new List<Task>
             {
                 _database.HashSetAsync(RedisKeys.GetMarketProfileKey(assetPair.AssetPair), assetPair.ToHashEntries()),
-                _database.SortedSetAddAsync(RedisKeys.GetAssetPairsKey(), assetPair.AssetPair, 0)
+                _database.SetAddAsync(RedisKeys.GetAssetPairsKey(), assetPair.AssetPair)
             };
 
             return Task.WhenAll(tasks);
