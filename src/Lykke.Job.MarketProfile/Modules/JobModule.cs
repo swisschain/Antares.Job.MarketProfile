@@ -1,39 +1,32 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common;
-using Common.Log;
+﻿using System;
+using Autofac;
+using AzureStorage.Blob;
+using Lykke.Job.MarketProfile.AzureRepositories;
+using Lykke.Job.MarketProfile.Domain.Repositories;
+using Lykke.Job.MarketProfile.Domain.Services;
+using Lykke.Job.MarketProfile.DomainServices;
+using Lykke.Job.MarketProfile.PeriodicalHandlers;
+using Lykke.Job.MarketProfile.RabbitMqSubscribers;
 using Lykke.Job.MarketProfile.Services;
-using Lykke.Job.MarketProfile.Settings.JobSettings;
+using Lykke.Job.MarketProfile.Settings;
 using Lykke.Sdk;
 using Lykke.Sdk.Health;
 using Lykke.SettingsReader;
-using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Lykke.Job.MarketProfile.Modules
 {
     public class JobModule : Module
     {
-        private readonly MarketProfileJobSettings _settings;
-        private readonly IReloadingManager<MarketProfileJobSettings> _settingsManager;
-        // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
-        private readonly IServiceCollection _services;
+        private readonly IReloadingManager<AppSettings> _settings;
 
-        public JobModule(MarketProfileJobSettings settings, IReloadingManager<MarketProfileJobSettings> settingsManager)
+        public JobModule(IReloadingManager<AppSettings> settings)
         {
             _settings = settings;
-            _settingsManager = settingsManager;
-
-            _services = new ServiceCollection();
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            // NOTE: Do not register entire settings in container, pass necessary settings to services which requires them
-            // ex:
-            // builder.RegisterType<QuotesPublisher>()
-            //  .As<IQuotesPublisher>()
-            //  .WithParameter(TypedParameter.From(_settings.Rabbit.ConnectionString))
-
             builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
@@ -46,10 +39,43 @@ namespace Lykke.Job.MarketProfile.Modules
                 .As<IShutdownManager>()
                 .AutoActivate()
                 .SingleInstance();
+            
+            builder.RegisterType<PersistHandler>()
+                .WithParameter(TypedParameter.From(_settings.CurrentValue.MarketProfileJob.PersistPeriod))
+                .As<IStartable>()
+                .AutoActivate()
+                .SingleInstance();
 
-            // TODO: Add your dependencies here
+            builder.Register<IAssetPairsRepository>(
+                x => new AssetPairsRepository(
+                    AzureBlobStorage.Create(_settings.ConnectionString(c => c.MarketProfileJob.Db.AssetPairsPricesConnString)),
+                    _settings.CurrentValue.MarketProfileJob.Blob.Container,
+                    _settings.CurrentValue.MarketProfileJob.Blob.Key));
 
-            builder.Populate(_services);
+            builder.RegisterType<AssetPairsCacheService>()
+                .As<IAssetPairsCacheService>()
+                .SingleInstance();
+
+            builder.RegisterType<QuotesSubscriber>()
+                .WithParameter(new NamedParameter("connectionString", _settings.CurrentValue.MarketProfileJob.RabbitMq.QuotesConnectionString))
+                .WithParameter(new NamedParameter("exchangeName", _settings.CurrentValue.MarketProfileJob.RabbitMq.QuotesExchangeName))
+                .WithParameter(new NamedParameter("queueSuffix", _settings.CurrentValue.MarketProfileJob.RabbitMq.QueueSuffix))
+                .As<IStartable>()
+                .AutoActivate()
+                .SingleInstance();
+            
+            builder.Register(c =>
+                {
+                    var lazy = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(_settings.CurrentValue.MarketProfileJob.Redis.Configuration)); 
+                    return lazy.Value;
+                })
+                .As<IConnectionMultiplexer>()
+                .SingleInstance();
+
+            builder.Register(c => c.Resolve<IConnectionMultiplexer>().GetDatabase())
+                .As<IDatabase>();
+            
+            builder.RegisterType<RedisService>().SingleInstance();
         }
     }
 }

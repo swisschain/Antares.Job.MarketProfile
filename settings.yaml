@@ -1,9 +1,31 @@
 MarketProfileJob:
+  PersistPeriod:
+    settings-key: MarketProfileJob-PersistPeriod
   Db:
     LogsConnString:
       settings-key: MarketProfileJob-LogsConnString
-      types:
-        - AzureTableStorage
+      types: [ AzureTableStorage ]
+    AssetPairsPricesConnString:
+      settings-key: MarketProfileJob-AssetPairsPricesConnString
+      types: [ AzureTableStorage ]
+  Blob:
+    Container:
+      settings-key: MarketProfileJob-Blob-Container
+    Key:
+      settings-key: MarketProfileJob-Blob-Key
+  Redis:
+    Configuration:
+      settings-key: RedisConfiguration
+      types: [ Redis ]
+  RabbitMq:
+    QuotesConnectionString:
+      settings-key: MarketProfileJob-QuotesConnectionString
+      types: [ RabbitMq ]
+    QuotesExchangeName:
+      settings-key: MarketProfileJob-QuotesExchangeName
+    QueueSuffix:
+      settings-key: MarketProfileJob-QueueSuffix
+      types: [ Optional ]
 SlackNotifications:
     AzureQueue:
         ConnectionString:
