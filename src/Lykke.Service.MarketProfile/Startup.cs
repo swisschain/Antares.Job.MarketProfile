@@ -1,28 +1,28 @@
-﻿using JetBrains.Annotations;
-using Lykke.Job.MarketProfile.Settings;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using Antares.Sdk;
+﻿using Antares.Sdk;
 using Autofac;
+using JetBrains.Annotations;
+using Lykke.Service.MarketProfile.Settings;
 using Lykke.SettingsReader;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
 using Swisschain.Sdk.Metrics.Rest;
 
-namespace Lykke.Job.MarketProfile
+namespace Lykke.Service.MarketProfile
 {
     [UsedImplicitly]
     public class Startup
     {
         private readonly LykkeSwaggerOptions _swaggerOptions = new LykkeSwaggerOptions
         {
-            ApiTitle = "MarketProfileJob API",
+            ApiTitle = "Lykke Market Profile",
             ApiVersion = "v1"
         };
 
         private LykkeServiceOptions<AppSettings> _lykkeOptions;
         private IReloadingManagerWithConfiguration<AppSettings> _settings;
+
 
         [UsedImplicitly]
         public void ConfigureServices(IServiceCollection services)
@@ -33,8 +33,8 @@ namespace Lykke.Job.MarketProfile
 
                 options.Logs = logs =>
                 {
-                    logs.AzureTableName = "MarketProfileJobLog";
-                    logs.AzureTableConnectionStringResolver = settings => settings.MarketProfileJob.Db.LogsConnString;
+                    logs.AzureTableName = "MarketProfileServiceLog";
+                    logs.AzureTableConnectionStringResolver = settings => settings.MarketProfileService.Db.LogsConnectionString;
                 };
 
                 options.Extend = (sc, settingsManager) =>

@@ -1,23 +1,27 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Job.MarketProfile.Contract;
 using Lykke.Job.MarketProfile.Domain.Services;
+using Lykke.Job.MarketProfile.NoSql.Models;
 using Lykke.Job.QuotesProducer.Contract;
 
 namespace Lykke.Job.MarketProfile.DomainServices
 {
     public class AssetPairsCacheService : IAssetPairsCacheService
     {
-        private readonly RedisService _redisService;
+        //private readonly RedisService _redisService;
+        private readonly IMyNoSqlWriterWrapper<AssetPairPriceNoSql> _myNoSqlWriterWrapper;
         private ConcurrentDictionary<string, AssetPairPrice> _pairs = new ConcurrentDictionary<string, AssetPairPrice>();
 
         public AssetPairsCacheService(
-            RedisService redisService)
+            RedisService redisService,
+            IMyNoSqlWriterWrapper<AssetPairPriceNoSql> myNoSqlWriterWrapper)
         {
-            _redisService = redisService;
+           // _redisService = redisService;
+            _myNoSqlWriterWrapper = myNoSqlWriterWrapper;
         }
 
         public Task InitCacheAsync(AssetPairPrice[] pairsToCache)
@@ -30,7 +34,7 @@ namespace Lykke.Job.MarketProfile.DomainServices
 
             foreach (var pair in _pairs.Values)
             {
-                tasks.Add(_redisService.AddAssetPairPriceAsync(pair));
+                tasks.Add(_myNoSqlWriterWrapper.TryInsertOrReplaceAsync(AssetPairPriceNoSql.Create(pair)));
             }
 
             return Task.WhenAll(tasks);
@@ -43,7 +47,7 @@ namespace Lykke.Job.MarketProfile.DomainServices
                 addValueFactory: assetPairId => Create(quote),
                 updateValueFactory: (assetPairId, pair) => UpdateAssetPairPrice(pair, quote));
 
-            return _redisService.AddAssetPairPriceAsync(assetPair);
+            return _myNoSqlWriterWrapper.TryInsertOrReplaceAsync(AssetPairPriceNoSql.Create(assetPair));
         }
 
         public AssetPairPrice[] GetAll()

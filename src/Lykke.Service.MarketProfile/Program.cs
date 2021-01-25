@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Antares.Sdk;
 
-namespace Lykke.Job.MarketProfile
+namespace Lykke.Service.MarketProfile
 {
     internal sealed class Program
     {
