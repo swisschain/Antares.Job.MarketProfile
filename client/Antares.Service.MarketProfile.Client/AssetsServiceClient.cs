@@ -11,14 +11,14 @@ using MyNoSqlServer.DataReader;
 
 namespace Antares.Service.MarketProfile.Client
 {
-    public class MarketServiceClient : IMarketProfileClient, IDisposable
+    public class MarketProfileServiceClient : IMarketProfileClient, IDisposable
     {
         private readonly MyNoSqlTcpClient _myNoSqlClient;
 
         private readonly IMyNoSqlServerDataReader<AssetPairPriceNoSql> _readerAssetPairNoSql;
         private readonly ILykkeMarketProfile _httpClient;
 
-        public MarketServiceClient(
+        public MarketProfileServiceClient(
             string myNoSqlServerReaderHost,
             string marketServiceHttpApiUrl)
         {
@@ -50,7 +50,7 @@ namespace Antares.Service.MarketProfile.Client
                 Thread.Sleep(100);
             }
             sw.Stop();
-            Console.WriteLine($"AssetService client is started. Wait time: {sw.ElapsedMilliseconds} ms");
+            Console.WriteLine($"MarketProfileServiceClient client is started. Wait time: {sw.ElapsedMilliseconds} ms");
         }
 
         public void Dispose()
