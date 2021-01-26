@@ -11,14 +11,14 @@ using MyNoSqlServer.DataReader;
 
 namespace Antares.Service.MarketProfile.Client
 {
-    public partial class AssetsServiceClient : IAssetPairsClient, IDisposable
+    public class MarketServiceClient : IMarketProfileClient, IDisposable
     {
         private readonly MyNoSqlTcpClient _myNoSqlClient;
 
         private readonly IMyNoSqlServerDataReader<AssetPairPriceNoSql> _readerAssetPairNoSql;
         private readonly ILykkeMarketProfile _httpClient;
 
-        public AssetsServiceClient(
+        public MarketServiceClient(
             string myNoSqlServerReaderHostPort,
             string marketServiceHttpApiUrl)
         {
@@ -30,7 +30,7 @@ namespace Antares.Service.MarketProfile.Client
             _readerAssetPairNoSql = new MyNoSqlReadRepository<AssetPairPriceNoSql>(_myNoSqlClient, AssetPairPriceNoSql.TableName);
         }
 
-        public IAssetPairsClient AssetPairs => this;
+        public IMarketProfileClient AssetPairs => this;
 
         public ILykkeMarketProfile HttpClient => _httpClient;
 
@@ -58,7 +58,7 @@ namespace Antares.Service.MarketProfile.Client
             _myNoSqlClient.Stop();
         }
 
-        IAssetPair IAssetPairsClient.Get(string id)
+        IAssetPair IMarketProfileClient.Get(string id)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Antares.Service.MarketProfile.Client
             }
         }
 
-        List<IAssetPair> IAssetPairsClient.GetAll()
+        List<IAssetPair> IMarketProfileClient.GetAll()
         {
             try
             {

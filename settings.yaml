@@ -37,4 +37,7 @@ SlackNotifications:
 MonitoringServiceClient:
     MonitoringServiceUrl:
         settings-key: MonitoringServiceUrl
+MyNoSqlServer:
+    WriterServiceUrl:
+        settings-key: MyNoSqlServer-WriterUrl
 

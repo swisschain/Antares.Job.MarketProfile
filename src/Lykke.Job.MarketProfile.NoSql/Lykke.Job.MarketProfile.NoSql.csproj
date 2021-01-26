@@ -7,6 +7,6 @@
     <PackageReference Include="MyNoSqlServer20.DataWriter" Version="1.2.6" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lykke.Job.MarketProfile.Domain\Lykke.Job.MarketProfile.Domain.csproj" />
+    <ProjectReference Include="..\..\contract\Lykke.Job.MarketProfile.Contract\Lykke.Job.MarketProfile.Contract.csproj" />
   </ItemGroup>
 </Project>

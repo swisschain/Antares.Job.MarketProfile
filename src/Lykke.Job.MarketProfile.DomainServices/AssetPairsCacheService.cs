@@ -12,7 +12,7 @@ namespace Lykke.Job.MarketProfile.DomainServices
 {
     public class AssetPairsCacheService : IAssetPairsCacheService
     {
-        //private readonly RedisService _redisService;
+        private readonly RedisService _redisService;
         private readonly IMyNoSqlWriterWrapper<AssetPairPriceNoSql> _myNoSqlWriterWrapper;
         private ConcurrentDictionary<string, AssetPairPrice> _pairs = new ConcurrentDictionary<string, AssetPairPrice>();
 
@@ -20,7 +20,7 @@ namespace Lykke.Job.MarketProfile.DomainServices
             RedisService redisService,
             IMyNoSqlWriterWrapper<AssetPairPriceNoSql> myNoSqlWriterWrapper)
         {
-           // _redisService = redisService;
+            _redisService = redisService;
             _myNoSqlWriterWrapper = myNoSqlWriterWrapper;
         }
 
@@ -34,6 +34,7 @@ namespace Lykke.Job.MarketProfile.DomainServices
 
             foreach (var pair in _pairs.Values)
             {
+                tasks.Add(_redisService.AddAssetPairPriceAsync(pair));
                 tasks.Add(_myNoSqlWriterWrapper.TryInsertOrReplaceAsync(AssetPairPriceNoSql.Create(pair)));
             }
 
@@ -47,7 +48,8 @@ namespace Lykke.Job.MarketProfile.DomainServices
                 addValueFactory: assetPairId => Create(quote),
                 updateValueFactory: (assetPairId, pair) => UpdateAssetPairPrice(pair, quote));
 
-            return _myNoSqlWriterWrapper.TryInsertOrReplaceAsync(AssetPairPriceNoSql.Create(assetPair));
+            return Task.WhenAll(_myNoSqlWriterWrapper.TryInsertOrReplaceAsync(AssetPairPriceNoSql.Create(assetPair)),
+                _redisService.AddAssetPairPriceAsync(assetPair));
         }
 
         public AssetPairPrice[] GetAll()
