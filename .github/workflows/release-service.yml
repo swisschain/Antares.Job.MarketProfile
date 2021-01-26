@@ -1,3 +1,9 @@
+name: Release Service
+
+on:
+  push:
+    tags: "service-*"
+
 jobs:
   build:
 

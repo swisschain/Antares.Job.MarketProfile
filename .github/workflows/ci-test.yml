@@ -1,9 +1,9 @@
-name: CI dev build
+name: CI test build
 
 on:
   push:
       branches:
-        - dev
+        - test
 
 jobs:
   build:
