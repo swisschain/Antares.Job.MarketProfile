@@ -15,14 +15,12 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Antares</PackageTags>
     <Version>1.0.1</Version>
-    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="7.5.0" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.20" />
     <PackageReference Include="MyNoSqlServer20.DataReader" Version="1.2.18" />
-    <None Include="images\icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 
   <ItemGroup>
