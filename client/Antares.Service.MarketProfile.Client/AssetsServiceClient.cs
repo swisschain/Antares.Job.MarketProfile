@@ -19,13 +19,13 @@ namespace Antares.Service.MarketProfile.Client
         private readonly ILykkeMarketProfile _httpClient;
 
         public MarketServiceClient(
-            string myNoSqlServerReaderHostPort,
+            string myNoSqlServerReaderHost,
             string marketServiceHttpApiUrl)
         {
             var host = Environment.GetEnvironmentVariable("HOST") ?? Environment.MachineName;
             _httpClient = new LykkeMarketProfile(new Uri(marketServiceHttpApiUrl));
 
-            _myNoSqlClient = new MyNoSqlTcpClient(() => myNoSqlServerReaderHostPort, host);
+            _myNoSqlClient = new MyNoSqlTcpClient(() => myNoSqlServerReaderHost, host);
 
             _readerAssetPairNoSql = new MyNoSqlReadRepository<AssetPairPriceNoSql>(_myNoSqlClient, AssetPairPriceNoSql.TableName);
         }
