@@ -12,7 +12,7 @@ using LykkeMarketProfile = Antares.Service.MarketProfile.LykkeClient.LykkeMarket
 
 namespace Antares.Service.MarketProfile.Client
 {
-    public class MarketProfileServiceClient : IMarketProfileClient, IDisposable
+    public class MarketProfileServiceClient : IMarketProfileServiceClient, IDisposable
     {
         private readonly MyNoSqlTcpClient _myNoSqlClient;
 
@@ -31,7 +31,7 @@ namespace Antares.Service.MarketProfile.Client
             _readerAssetPairNoSql = new MyNoSqlReadRepository<AssetPairPriceNoSql>(_myNoSqlClient, AssetPairPriceNoSql.TableName);
         }
 
-        public IMarketProfileClient AssetPairs => this;
+        public IMarketProfileServiceClient AssetPairs => this;
 
         public ILykkeMarketProfile HttpClient => _httpClient;
 
@@ -59,7 +59,7 @@ namespace Antares.Service.MarketProfile.Client
             _myNoSqlClient.Stop();
         }
 
-        IAssetPair IMarketProfileClient.Get(string id)
+        IAssetPair IMarketProfileServiceClient.Get(string id)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace Antares.Service.MarketProfile.Client
             }
         }
 
-        List<IAssetPair> IMarketProfileClient.GetAll()
+        List<IAssetPair> IMarketProfileServiceClient.GetAll()
         {
             try
             {
