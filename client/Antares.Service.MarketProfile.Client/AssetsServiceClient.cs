@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Antares.Service.MarketProfile.LykkeClient;
 using Lykke.Job.MarketProfile.Contract;
 using Lykke.Job.MarketProfile.NoSql.Models;
-using Lykke.Service.MarketProfile.Client;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
+using LykkeMarketProfile = Antares.Service.MarketProfile.LykkeClient.LykkeMarketProfile;
 
 namespace Antares.Service.MarketProfile.Client
 {

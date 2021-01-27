@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Net.Http;
 using Autofac;
 using JetBrains.Annotations;
 
-namespace Lykke.Service.MarketProfile.Client
+namespace Antares.Service.MarketProfile.LykkeClient
 {
     [PublicAPI]
     public static class AutofacExtensions
@@ -15,7 +14,7 @@ namespace Lykke.Service.MarketProfile.Client
             if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
-            builder.RegisterInstance<ILykkeMarketProfile>(new LykkeMarketProfile(new Uri(url), new HttpClient()));
+            builder.RegisterInstance<ILykkeMarketProfile>(new LykkeMarketProfile(new Uri(url), new System.Net.Http.HttpClient()));
         }
     }
 }
