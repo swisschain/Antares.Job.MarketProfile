@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyVersion>1.0.1.0</AssemblyVersion>
     <FileVersion>1.0.1.0</FileVersion>
     <Description>Client for Antares.Service.MarketProfile API</Description>
@@ -10,7 +10,7 @@
     <Product>Antares.Service.MarketProfile</Product>
     <PackageLicenseUrl>https://github.com/LykkeCity/Lykke.Service.MarketProfile/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/swisschain/Antares.Job.MarketProfile</PackageProjectUrl>
-    <PackageIconUrl>https://avatars3.githubusercontent.com/u/14153330?v=3&amp;amp;s=200</PackageIconUrl>
+    <PackageIconUrl>https://avatars2.githubusercontent.com/u/60782394</PackageIconUrl>
     <RepositoryUrl>https://github.com/swisschain/Antares.Job.MarketProfile.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Antares</PackageTags>
