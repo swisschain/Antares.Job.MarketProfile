@@ -11,5 +11,7 @@ namespace Antares.Service.MarketProfile.Client
         List<IAssetPair> GetAll();
 
         ILykkeMarketProfile HttpClient { get; }
+
+        void Start();
     }
 }

@@ -18,9 +18,11 @@ namespace Antares.Service.MarketProfile.Client
     {
         private readonly MyNoSqlTcpClient _myNoSqlClient;
 
+        private readonly object _locker = new object();
         private readonly IMyNoSqlServerDataReader<AssetPairPriceNoSql> _readerAssetPairNoSql;
         private readonly ILykkeMarketProfile _httpClient;
         private readonly ILog _log;
+        private bool _isStarted = false;
 
         public MarketProfileServiceClient(
             string myNoSqlServerReaderHost,
@@ -42,6 +44,20 @@ namespace Antares.Service.MarketProfile.Client
 
         public void Start()
         {
+            if (_isStarted)
+                return;
+
+            lock (_locker)
+            {
+                if (_isStarted)
+                    return;
+
+                StartPrivate();
+            }
+        }
+
+        private void StartPrivate()
+        {
             _myNoSqlClient.Start();
 
             var sw = new Stopwatch();
@@ -50,7 +66,7 @@ namespace Antares.Service.MarketProfile.Client
             int currentRetry = 0;
             var totalAmount = 1;
 
-            for (; ; )
+            for (;;)
             {
                 try
                 {
@@ -70,7 +86,7 @@ namespace Antares.Service.MarketProfile.Client
                     }
                 }
 
-                var delay = Math.Min((int)Math.Pow(2, currentRetry) * 100, 5000);
+                var delay = Math.Min((int) Math.Pow(2, currentRetry) * 100, 5000);
                 Thread.Sleep(delay);
             }
 
@@ -87,6 +103,7 @@ namespace Antares.Service.MarketProfile.Client
 
                 Thread.Sleep(100);
             }
+
             sw.Stop();
 
             _log.Info($"MarketProfileServiceClient client is started. Wait time: {sw.ElapsedMilliseconds} ms");
@@ -96,6 +113,8 @@ namespace Antares.Service.MarketProfile.Client
                 _log.Warning($"Cache items amount = {EventualCache.GetAll().Count}, " +
                              $"while service items amount = {totalAmount}, They should be equal!");
             }
+
+            _isStarted = true;
         }
 
         public void Dispose()
