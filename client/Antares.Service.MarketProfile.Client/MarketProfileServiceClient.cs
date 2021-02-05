@@ -27,9 +27,9 @@ namespace Antares.Service.MarketProfile.Client
         public MarketProfileServiceClient(
             string myNoSqlServerReaderHost,
             string marketServiceHttpApiUrl,
-            ILogFactory logFactory)
+            ILog log)
         {
-            _log = logFactory.CreateLog(nameof(MarketProfileServiceClient));
+            _log = log;
             var host = Environment.GetEnvironmentVariable("HOST") ?? Environment.MachineName;
             _httpClient = new LykkeMarketProfile(new Uri(marketServiceHttpApiUrl));
 
