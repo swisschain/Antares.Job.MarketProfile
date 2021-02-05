@@ -14,7 +14,7 @@ namespace Console.Test
 
             var marketProfileClient = new MarketProfileServiceClient("nosql.share.svc.cluster.local:5125", 
                 "http://market-profile.lykke-service.svc.cluster.local/",
-                logFactory);
+                logFactory.CreateLog(nameof(Program)));
 
             marketProfileClient.Start();
 

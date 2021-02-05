@@ -27,9 +27,9 @@ namespace Antares.Service.MarketProfile.Client
         public MarketProfileServiceClient(
             string myNoSqlServerReaderHost,
             string marketServiceHttpApiUrl,
-            ILogFactory logFactory)
+            ILog log)
         {
-            _log = logFactory.CreateLog(nameof(MarketProfileServiceClient));
+            _log = log;
             var host = Environment.GetEnvironmentVariable("HOST") ?? Environment.MachineName;
             _httpClient = new LykkeMarketProfile(new Uri(marketServiceHttpApiUrl));
 
@@ -136,7 +136,7 @@ namespace Antares.Service.MarketProfile.Client
             {
                 _log.Error(nameof(IMarketProfileServiceClient.Get), ex, $"Cannot read from MyNoSQL. Table: ${AssetPairPriceNoSql.TableName}, " +
                                                                    $"PK: {AssetPairPriceNoSql.GeneratePartitionKey()}, " +
-                                                                   $"RK: {AssetPairPriceNoSql.GenerateRowKey(id)}, Ex: {ex}");
+                                                                   $"RK: {AssetPairPriceNoSql.GenerateRowKey(id)}");
                 throw;
             }
         }
@@ -151,7 +151,7 @@ namespace Antares.Service.MarketProfile.Client
             }
             catch (Exception ex)
             {
-                _log.Error(nameof(IMarketProfileServiceClient.GetAll), ex, $"Cannot read from MyNoSQL. Table: ${AssetPairPriceNoSql.TableName}, Ex: {ex}");
+                _log.Error(nameof(IMarketProfileServiceClient.GetAll), ex, $"Cannot read from MyNoSQL. Table: ${AssetPairPriceNoSql.TableName}");
                 throw;
             }
         }
