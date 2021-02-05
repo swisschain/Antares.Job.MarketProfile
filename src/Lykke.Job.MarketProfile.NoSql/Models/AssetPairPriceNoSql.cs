@@ -6,7 +6,7 @@ namespace Lykke.Job.MarketProfile.NoSql.Models
 {
     public class AssetPairPriceNoSql : MyNoSqlDbEntity
     {
-        public const string TableName = "antares.market-profile.asset-pair-prices";
+        public const string TableName = "antares_market-profile_asset-pair-prices";
 
         public static string GeneratePartitionKey() => "AssetPairPrice";
         public static string GenerateRowKey(string assetPairId) => assetPairId;

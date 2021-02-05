@@ -2,7 +2,7 @@
 using System.Net.Http;
 
 // ReSharper disable once CheckNamespace
-namespace Lykke.Service.MarketProfile.Client
+namespace Antares.Service.MarketProfile.LykkeClient
 {
     public partial class LykkeMarketProfile
     {
