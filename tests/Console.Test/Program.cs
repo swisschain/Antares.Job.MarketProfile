@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Antares.Service.MarketProfile.Client;
-using Lykke.Logs;
 
 namespace Console.Test
 {
@@ -10,11 +9,9 @@ namespace Console.Test
         {
             System.Console.WriteLine("PRESS ENTER:");
             System.Console.ReadLine();
-            var logFactory = EmptyLogFactory.Instance;
 
             var marketProfileClient = new MarketProfileServiceClient("nosql.share.svc.cluster.local:5125", 
-                "http://market-profile.lykke-service.svc.cluster.local/",
-                logFactory.CreateLog(nameof(Program)));
+                "http://market-profile.lykke-service.svc.cluster.local/");
 
             marketProfileClient.Start();
 
