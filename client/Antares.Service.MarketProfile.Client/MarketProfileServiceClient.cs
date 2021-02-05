@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Antares.Service.MarketProfile.LykkeClient;
-using Common.Log;
-using Lykke.Common.Log;
 using Lykke.Job.MarketProfile.Contract;
 using Lykke.Job.MarketProfile.NoSql.Models;
 using MyNoSqlServer.Abstractions;
@@ -21,15 +19,12 @@ namespace Antares.Service.MarketProfile.Client
         private readonly object _locker = new object();
         private readonly IMyNoSqlServerDataReader<AssetPairPriceNoSql> _readerAssetPairNoSql;
         private readonly ILykkeMarketProfile _httpClient;
-        private readonly ILog _log;
         private bool _isStarted = false;
 
         public MarketProfileServiceClient(
             string myNoSqlServerReaderHost,
-            string marketServiceHttpApiUrl,
-            ILog log)
+            string marketServiceHttpApiUrl)
         {
-            _log = log;
             var host = Environment.GetEnvironmentVariable("HOST") ?? Environment.MachineName;
             _httpClient = new LykkeMarketProfile(new Uri(marketServiceHttpApiUrl));
 
@@ -76,12 +71,12 @@ namespace Antares.Service.MarketProfile.Client
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex);
+                    Console.WriteLine(ex);
                     currentRetry++;
 
                     if (currentRetry > 10)
                     {
-                        _log.Warning("Can not access market profile service to get amount of asset pairs");
+                        Console.WriteLine("Can not access market profile service to get amount of asset pairs");
                         break;
                     }
                 }
@@ -106,12 +101,12 @@ namespace Antares.Service.MarketProfile.Client
 
             sw.Stop();
 
-            _log.Info($"MarketProfileServiceClient client is started. Wait time: {sw.ElapsedMilliseconds} ms");
+            Console.WriteLine($"MarketProfileServiceClient client is started. Wait time: {sw.ElapsedMilliseconds} ms");
 
             if (!isCacheSet)
             {
-                _log.Warning($"Cache items amount = {EventualCache.GetAll().Count}, " +
-                             $"while service items amount = {totalAmount}, They should be equal!");
+                Console.WriteLine($"Cache items amount = {EventualCache.GetAll().Count}, " +
+                                  $"while service items amount = {totalAmount}, They should be equal!");
             }
 
             _isStarted = true;
@@ -134,9 +129,9 @@ namespace Antares.Service.MarketProfile.Client
             }
             catch (Exception ex)
             {
-                _log.Error(nameof(IMarketProfileServiceClient.Get), ex, $"Cannot read from MyNoSQL. Table: ${AssetPairPriceNoSql.TableName}, " +
-                                                                   $"PK: {AssetPairPriceNoSql.GeneratePartitionKey()}, " +
-                                                                   $"RK: {AssetPairPriceNoSql.GenerateRowKey(id)}");
+                Console.WriteLine($"Cannot read from MyNoSQL. Table: ${AssetPairPriceNoSql.TableName}, " +
+                                                                               $"PK: {AssetPairPriceNoSql.GeneratePartitionKey()}, " +
+                                                                               $"RK: {AssetPairPriceNoSql.GenerateRowKey(id)}, Ex: {ex}");
                 throw;
             }
         }
@@ -151,7 +146,7 @@ namespace Antares.Service.MarketProfile.Client
             }
             catch (Exception ex)
             {
-                _log.Error(nameof(IMarketProfileServiceClient.GetAll), ex, $"Cannot read from MyNoSQL. Table: ${AssetPairPriceNoSql.TableName}");
+                Console.WriteLine($"Cannot read from MyNoSQL. Table: ${AssetPairPriceNoSql.TableName}, {ex}");
                 throw;
             }
         }
